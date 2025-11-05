@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import tiktoken
+import tiktoken 
 
 GPT_CONFIG_124M = {
     "vocab_size": 50257,    # Vocabulary size
@@ -199,4 +199,13 @@ def generate_text_simple(model, idx, max_new_tokens, context_size):
         idx = torch.cat((idx, idx_next), dim=1)  # (batch, n_tokens+1)
 
     return idx
+
+def text_to_token_ids(text, tokenizer):
+    encoded = tokenizer.encode(text, allowed_special={'<|endoftext|>'})
+    encoded_tensor = torch.tensor(encoded).unsqueeze(0) # add batch dimension
+    return encoded_tensor
+
+def token_ids_to_text(token_ids, tokenizer):
+    flat = token_ids.squeeze(0) # remove batch dimension
+    return tokenizer.decode(flat.tolist())
 
